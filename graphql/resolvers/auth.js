@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   
   createUser: async (args) => {
-    if (!req.isAuth) {
-      throw new Error("Unauthenticated");
-    }
+    // if (!req.isAuth) {
+    //   throw new Error("Unauthenticated");
+    // }
     try {
       const user = await User.findOne({ email: args.userInput.email });
       if (user) {
