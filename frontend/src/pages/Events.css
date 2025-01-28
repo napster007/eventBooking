@@ -7,21 +7,4 @@
     max-width: 80%;
 }
 
-.events__list{
 
-    list-style: none;
-    width: 40rem;
-    max-width: 90% ;
-    padding: 0;
-    text-align: center;
-    margin: 2rem auto;
-}
-
-.events__list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin: 0.5rem 0;
-}

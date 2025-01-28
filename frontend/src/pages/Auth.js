@@ -23,7 +23,6 @@ class AuthPage extends Component {
         const email = this.emailEl.current.value;
         const password = this.passwordEl.current.value;
         // Send the form data to the server
-        console.log(email, password);
         // Perform the necessary authentication logic
         if (email.trim().length === 0 || password.trim().length === 0) { 
             return;

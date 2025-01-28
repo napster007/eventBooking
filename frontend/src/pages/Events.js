@@ -3,10 +3,13 @@ import "./Events.css";
 import Modal from "../components/Modal/Modal";
 import Backdrop from '../components/Backdrop/Backdrop';
 import AuthContext from '../context/auth-context';
+import EventList from '../components/Events/EventList/EventList';
+import Spinner from '../components/Spinner/Spinner';
 class EventsPage extends Component {
   state = {
     creating: false,
     events: [],
+    isLoading: false,
   };
   static contextType = AuthContext;
   constructor(props) {
@@ -55,18 +58,13 @@ class EventsPage extends Component {
                         description
                         date
                         price
-                        creator {
-                            _id
-                            email
-                        }
+                       
                     }
                 }
             `,
     };
 
-    console.log(requestBody);
     const token = this.context.token;
-    console.log("Token: ", token);
     fetch("http://localhost:3001/api", {
       method: "POST",
       body: JSON.stringify(requestBody),
@@ -82,16 +80,21 @@ class EventsPage extends Component {
         return response.json();
       })
       .then((resData) => {
-        // if (resData.data.login.token) {
-        //   if (resData.data.login.token) {
-        //     this.context.login(
-        //       resData.data.login.token,
-        //       resData.data.login.userId,
-        //       resData.data.login.tokenExpiration
-        //     );
-        //   }
-        // }
-        this.fetchEvents();
+       
+        this.setState((prevState) => {
+          const updatedEvents = [...prevState.events];
+          updatedEvents.push({
+            _id: resData.data.createEvent._id,
+            title: resData.data.createEvent.title,
+            description: resData.data.createEvent.description,
+            date: resData.data.createEvent.date,
+            price: resData.data.createEvent.price,
+            creator: {
+              _id: this.context.userId
+            },
+          });
+          return { events: updatedEvents };
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -101,6 +104,7 @@ class EventsPage extends Component {
     this.setState({ creating: false });
   };
   fetchEvents = () => {
+    this.setState({ isLoading: true });
     const requestBody = {
       query: `
                 query {
@@ -134,21 +138,15 @@ class EventsPage extends Component {
       })
       .then((resData) => {
         const events = resData.data.events;
-        this.setState({ events: events });
+        this.setState({ events: events, isLoading: false });
       })
       .catch((err) => {
         console.log(err);
+        this.setState({ isLoading: false });  
       });
   };
 
   render() {
-    const eventList = this.state.events.map((event) => {
-      return (
-        <li key={event._id} className="events__list-item">
-          {event.title}
-        </li>
-      );
-    });
     return (
       <React.Fragment>
         {this.state.creating && <Backdrop />}
@@ -193,9 +191,14 @@ class EventsPage extends Component {
             </button>
           </div>
         )}
-        <ul className="events__list">
-          { eventList}
-        </ul>
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <EventList
+            events={this.state.events}
+            authUserId={this.context.userId}
+          />
+        )}
       </React.Fragment>
     );
   }
