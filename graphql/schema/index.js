@@ -2,13 +2,13 @@ const { buildSchema } = require("graphql");
 
 
 module.exports = buildSchema(
-`
+  `
         type Booking {
             _id:ID!
             event: Event!
             user: User!
             createdAt: String!
-            upsdatedAt: String!
+            updatedAt: String!
         }
 
         type Event {
@@ -61,4 +61,5 @@ module.exports = buildSchema(
         query:RootQuery
         mutation: RootMutation
         }
-    `);
+    `
+);
