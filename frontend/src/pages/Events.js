@@ -56,8 +56,8 @@ class EventsPage extends Component {
     // Send the event data to the server
     const requestBody = {
       query: `
-                mutation {
-                    createEvent(eventInput:{title: "${title}", description: "${description}", price: ${price}, date: "${date}"}) {
+                mutation createEvent($event: String!, $description: String!, $price: Float!, $date: String!) {
+                    createEvent(eventInput:{title: $event, description: $description, price: $price, date: $date}) {
                         _id
                         title
                         description
@@ -67,6 +67,12 @@ class EventsPage extends Component {
                     }
                 }
             `,
+      variables: {
+        event: event.title,
+        description: event.description,
+        price: event.price,
+        date: event.date,
+      },  
     };
 
     const token = this.context.token;
@@ -170,14 +176,16 @@ class EventsPage extends Component {
     }
     const requestBody = {
       query: `
-          mutation {
-              bookEvent(eventId: "${this.state.selectedEvent._id}") {
+          mutation bookEvent($id: ID!) {
+              bookEvent(eventId: $id) {
                   _id
                   createdAt
                   updatedAt
               }
           }
-      `
+      `,variables: {
+        id: this.state.selectedEvent._id
+      } 
     };
 
     fetch('http://localhost:3001/api', {  
